@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Interview Learning Video - Grade XII</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#07152f;color:#fff}
+.app{max-width:1200px;margin:auto;background:#0b1d3d;min-height:100vh;box-shadow:0 0 40px #0008}
+header{padding:20px 24px;background:linear-gradient(135deg,#123b82,#2563eb)}
+header h1{margin:0;font-size:30px}header p{margin:7px 0 0;color:#e0ecff}
+.stage{position:relative;background:#020617;overflow:hidden}
+.visual{width:100%;height:min(66vh,650px);object-fit:contain;display:block;transform:scale(1);transition:transform 9s ease}
+.visual.playing{transform:scale(1.07)}
+.dim{position:absolute;inset:0;background:linear-gradient(180deg,#0000 45%,#0009 100%);pointer-events:none}
+.sceneBadge{position:absolute;top:18px;left:20px;padding:10px 15px;border-radius:12px;background:#0b1d3dcc;border:1px solid #93c5fd;font-weight:800;z-index:3}
+.character{position:absolute;bottom:35px;width:42%;max-width:420px;z-index:4;opacity:0;transform:translateY(25px) scale(.95);transition:all .55s ease}
+.character.show{opacity:1;transform:translateY(0) scale(1)}
+.interviewer{left:4%}.applicant{right:4%}
+.avatar{width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:42px;background:#fff;border:4px solid #60a5fa;box-shadow:0 5px 18px #0007}
+.bubble{margin-top:7px;background:#fff;color:#13213b;padding:13px 16px;border-radius:16px;box-shadow:0 5px 20px #0007;font-size:17px;line-height:1.35;position:relative}
+.interviewer .bubble:before{content:"";position:absolute;left:20px;top:-10px;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:12px solid #fff}
+.applicant .bubble:before{content:"";position:absolute;right:20px;top:-10px;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:12px solid #fff}
+.name{font-weight:800;color:#1d4ed8;margin-bottom:4px}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:13px 18px;background:#102751}
+button{border:0;border-radius:9px;padding:11px 15px;font-weight:800;cursor:pointer}
+.primary{background:#3b82f6;color:#fff}.secondary{background:#475569;color:#fff}.green{background:#10b981;color:#fff}.orange{background:#f59e0b;color:#111}.activeBtn{outline:3px solid #bfdbfe}
+.timeline{height:9px;background:#334155;border-radius:99px;flex:1;min-width:170px;cursor:pointer}
+.timeline span{display:block;height:100%;width:0;background:#60a5fa;border-radius:99px;transition:width .25s}
+.counter{min-width:55px;text-align:center;font-weight:800}
+.caption{background:#0f2b57;padding:18px 23px;line-height:1.6}
+.caption strong{color:#93c5fd}.captionText{font-size:18px;margin-top:5px}
+.lesson{background:#f8fafc;color:#172033;padding:24px}
+.lesson h2{margin:0 0 8px;color:#1d4ed8}.lesson p{font-size:17px;line-height:1.7}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{padding:15px;background:#eef6ff;border-left:5px solid #2563eb;border-radius:8px}
+.card h3{margin:0 0 6px;color:#1e40af}.card p{margin:0;line-height:1.45}
+.listenRow{margin:15px 0;display:flex;gap:8px;flex-wrap:wrap}
+.sentence{padding:13px 16px;background:#e0f2fe;border-radius:10px;color:#0c4a6e;font-weight:700;flex:1;min-width:240px}
+.sentence.highlight{animation:pulse .8s ease}
+@keyframes pulse{50%{transform:scale(1.03);background:#bfdbfe}}
+.notice{margin-top:15px;padding:12px 15px;background:#fff7ed;border-left:5px solid #f59e0b;color:#7c2d12;border-radius:7px}
+footer{padding:15px 20px;text-align:center;color:#94a3b8;font-size:13px;background:#081a36}
+@media(max-width:760px){
+header h1{font-size:22px}.visual{height:48vh}.character{width:46%;bottom:18px}.bubble{font-size:13px;padding:9px}.avatar{width:55px;height:55px;font-size:30px}.cards{grid-template-columns:1fr}.captionText{font-size:16px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+<h1>💼 Job Interview — Interactive Learning Video</h1>
+<p>Grade XII SMK • Preparing for the World of Work</p>
+</header>
+
+<div class="stage">
+<img id="visual" class="visual" src="job-interview-overview.png" alt="Job interview learning material">
+<div class="dim"></div>
+<div id="badge" class="sceneBadge">Scene 1 • Introduction</div>
+
+<div id="interviewer" class="character interviewer">
+<div class="avatar">👩‍💼</div>
+<div class="bubble"><div class="name">Interviewer</div><span id="ibubble"></span></div>
+</div>
+<div id="applicant" class="character applicant">
+<div class="avatar">👨‍💼</div>
+<div class="bubble"><div class="name">Applicant</div><span id="abubble"></span></div>
+</div>
+</div>
+
+<div class="controls">
+<button id="back" class="secondary">◀ Previous</button>
+<button id="play" class="primary">▶ Play Lesson</button>
+<button id="next" class="secondary">Next ▶</button>
+<button id="listen" class="green">🔊 Listen</button>
+<button id="mute" class="orange">🔊 Voice ON</button>
+<div id="timeline" class="timeline"><span id="bar"></span></div>
+<div id="counter" class="counter">1/10</div>
+</div>
+
+<div class="caption">
+<strong>🎙️ Subtitle / Voice-over</strong>
+<div id="captionText" class="captionText"></div>
+</div>
+
+<section class="lesson">
+<h2 id="lessonTitle"></h2>
+<p id="lessonText"></p>
+<div class="listenRow" id="sentences"></div>
+<div class="cards" id="cards"></div>
+<div class="notice">💡 <b>Teacher tip:</b> Encourage students to repeat the model sentences aloud and adapt them to their own major, internship, and skills.</div>
+</section>
+
+<footer>Interactive English Learning Material • Job Interview • Grade XII SMK</footer>
+</div>
+
+<script>
+(function(){
+const scenes=[
+{badge:"Scene 1 • Introduction",title:"What Is a Job Interview?",img:"job-interview-overview.png",
+text:"A job interview is a formal conversation between a job applicant and an interviewer. The interviewer wants to find out whether the candidate has the right education, skills, experience, attitude, communication, motivation, teamwork, and professional ability.",
+i:"Can you tell me about yourself?",a:"Certainly. I'd be happy to introduce myself.",
+sent:["A job interview is a formal conversation.","The applicant and interviewer communicate professionally."],
+cards:[["Applicant","The person who applies for a job."],["Interviewer","The person who asks questions and evaluates the candidate."],["Purpose","To find out whether the candidate is suitable for the position."]]},
+{badge:"Scene 2 • Greeting & Introduction",title:"Greeting and Introduction",img:"job-interview-overview.png",
+text:"The interview starts with a polite greeting. Then introduce yourself briefly. Mention your name, recent graduation, and major. Speak clearly and confidently.",
+i:"Good morning. Thank you for inviting me to this interview.",a:"My name is Rudi. I recently graduated from SMK.",
+sent:["Good morning.","Thank you for inviting me to this interview.","I'd like to introduce myself."],
+cards:[["Greeting","Good morning / Good afternoon."],["Introduction","My name is... I recently graduated from..."],["Tip","Keep your introduction short, clear, and professional."]]},
+{badge:"Scene 3 • Education",title:"Talking About Education",img:"job-interview-expressions.png",
+text:"When talking about education, explain your school, graduation, and major. Choose information that is relevant to the job you are applying for.",
+i:"What is your educational background?",a:"I graduated from SMK in 2026. I majored in Software Engineering.",
+sent:["I graduated from SMK in 2026.","I majored in Software Engineering.","I studied Computer and Network Engineering."],
+cards:[["Graduation","I graduated from SMK in 2026."],["Major","I majored in..."],["Relevant knowledge","Mention subjects or knowledge connected to the position."]]},
+{badge:"Scene 4 • Internship / PKL",title:"Talking About Experience",img:"job-interview-expressions.png",
+text:"For fresh graduates, internship or PKL is valuable work-related experience. Explain where you worked, what you did, and what you learned.",
+i:"What did you learn during your internship?",a:"During my internship, I worked with the maintenance team and learned how to work in a team.",
+sent:["I completed my internship at a manufacturing company.","During my internship, I worked with the maintenance team.","I gained experience in operating and maintaining machines."],
+cards:[["Where","I completed my internship at..."],["What","I worked with... / I assisted with..."],["Learning","I learned how to work in a team."]]},
+{badge:"Scene 5 • Skills",title:"Technical Skills and Soft Skills",img:"job-interview-expressions.png",
+text:"Technical skills are practical abilities related to your field. Soft skills describe how you communicate, cooperate, solve problems, and manage your work.",
+i:"What technical skills do you have?",a:"I can troubleshoot computer problems and create simple websites.",
+sent:["I can operate basic machinery.","I can use AutoCAD.","I have good communication skills.","I can work well in a team."],
+cards:[["Technical Skills","AutoCAD, networking, machinery, troubleshooting, websites."],["Soft Skills","Communication, teamwork, problem solving, time management."],["Tip","Give skills that match the job position."]]},
+{badge:"Scene 6 • Strengths",title:"Talking About Strengths",img:"job-interview-expressions.png",
+text:"A strong answer about your strengths includes a strength and an example. This makes your answer more convincing.",
+i:"What are your strengths?",a:"One of my strengths is teamwork. During my internship, I worked with several team members to complete a project on time.",
+sent:["I am hardworking and responsible.","I am a fast learner.","I am good at teamwork.","I am able to solve problems effectively."],
+cards:[["Strength","Choose a real positive quality."],["Example","Support it with school, PKL, or project experience."],["Pattern","One of my strengths is... During my internship..."]]},
+{badge:"Scene 7 • Weaknesses",title:"Talking About Weaknesses",img:"job-interview-expressions.png",
+text:"Do not give an extremely negative answer. Mention an area you are improving and explain what you are doing to become better.",
+i:"What is your weakness?",a:"One of my weaknesses is that I sometimes feel nervous when speaking in front of many people. However, I am working on this by practicing presentations regularly.",
+sent:["One area I am working to improve is...","However, I am working on this by..."],
+cards:[["Avoid","I am lazy. / I don't like working."],["Better pattern","Weakness + improvement."],["Example","I sometimes feel nervous, so I practice presentations regularly."]]},
+{badge:"Scene 8 • Motivation",title:"Why Do You Want This Job?",img:"job-interview-expressions.png",
+text:"Show that you are interested in the position and that it matches your education, skills, and career development. Do not make salary your only reason.",
+i:"Why do you want to work here?",a:"I want to work for your company because it is a good place to develop my technical skills and gain professional experience.",
+sent:["I am interested in this position because it matches my education and skills.","I want to develop my skills and contribute to the company."],
+cards:[["Reason","Explain your genuine interest."],["Match","Connect the position with your skills."],["Contribution","Show that you want to contribute and learn."]]},
+{badge:"Scene 9 • Why Should We Hire You?",title:"Presenting Your Value",img:"job-interview-expressions.png",
+text:"Use this question to summarize why you are a suitable candidate. Mention relevant skills, internship experience, responsibility, motivation, and willingness to learn.",
+i:"Why should we hire you?",a:"I believe I am suitable because my educational background and internship experience match the requirements. I am also responsible, motivated, and willing to learn new skills.",
+sent:["I believe I am suitable for this position because...","I am responsible, motivated, and willing to learn new skills."],
+cards:[["Relevant skills","Mention skills required by the position."],["Experience","Connect your PKL or project to the job."],["Attitude","Show responsibility, motivation, and willingness to learn."]]},
+{badge:"Scene 10 • Career Goals & Closing",title:"Career Goals and Closing",img:"job-interview-expressions.png",
+text:"Describe a realistic five-year goal. At the end, ask a relevant question and thank the interviewer politely.",
+i:"Where do you see yourself in five years?",a:"In five years, I hope to become an experienced professional and take on more responsibilities in the company.",
+sent:["What kind of training does the company provide?","What skills are most important for this position?","Thank you for your time.","I appreciate the opportunity to speak with you."],
+cards:[["Career goal","Develop skills and gradually take more responsibility."],["Good question","Ask about training, responsibilities, skills, or recruitment."],["Closing","Thank the interviewer and show appreciation."]]}
+];
+
+let current=0,playing=false,voiceOn=true,timer=null;
+const visual=document.getElementById("visual"), badge=document.getElementById("badge");
+const lessonTitle=document.getElementById("lessonTitle"),lessonText=document.getElementById("lessonText");
+const captionText=document.getElementById("captionText"),sentences=document.getElementById("sentences");
+const cards=document.getElementById("cards"),ibubble=document.getElementById("ibubble"),abubble=document.getElementById("abubble");
+const interviewer=document.getElementById("interviewer"),applicant=document.getElementById("applicant");
+const play=document.getElementById("play"),bar=document.getElementById("bar"),counter=document.getElementById("counter");
+
+function render(){
+const s=scenes[current];
+visual.src=s.img; badge.textContent=s.badge;
+lessonTitle.textContent=s.title;lessonText.textContent=s.text;captionText.textContent=s.text;
+ibubble.textContent=s.i;abubble.textContent=s.a;
+interviewer.classList.remove("show");applicant.classList.remove("show");
+setTimeout(()=>{interviewer.classList.add("show");setTimeout(()=>applicant.classList.add("show"),350)},80);
+counter.textContent=(current+1)+"/"+scenes.length;bar.style.width=((current+1)/scenes.length*100)+"%";
+sentences.innerHTML="";s.sent.forEach((x,i)=>{let d=document.createElement("div");d.className="sentence";d.textContent=x;d.onclick=()=>speakText(x);sentences.appendChild(d)});
+cards.innerHTML="";s.cards.forEach(x=>{let d=document.createElement("div");d.className="card";d.innerHTML="<h3>"+x[0]+"</h3><p>"+x[1]+"</p>";cards.appendChild(d)});
+if(playing){visual.classList.add("playing")}else{visual.classList.remove("playing")}
+}
+function speakText(text){
+if(!voiceOn||!("speechSynthesis"in window))return;
+window.speechSynthesis.cancel();
+const u=new SpeechSynthesisUtterance(text);u.lang="en-US";u.rate=.88;u.pitch=1;window.speechSynthesis.speak(u);
+}
+function speakScene(){
+const s=scenes[current];
+speakText(s.title+". "+s.text+" "+s.sent.join(". "));
+}
+function schedule(){
+clearTimeout(timer);
+timer=setTimeout(()=>{if(current<scenes.length-1){current++;render();speakScene();schedule()}else stop()},10500);
+}
+function start(){playing=true;play.textContent="⏸ Pause Lesson";render();speakScene();schedule()}
+function stop(){playing=false;clearTimeout(timer);play.textContent="▶ Play Lesson";visual.classList.remove("playing");if("speechSynthesis"in window)window.speechSynthesis.cancel()}
+play.onclick=()=>playing?stop():start();
+document.getElementById("listen").onclick=()=>speakScene();
+document.getElementById("mute").onclick=function(){voiceOn=!voiceOn;this.textContent=voiceOn?"🔊 Voice ON":"🔇 Voice OFF";if(!voiceOn&&"speechSynthesis"in window)window.speechSynthesis.cancel()};
+document.getElementById("next").onclick=()=>{stop();if(current<scenes.length-1)current++;render()};
+document.getElementById("back").onclick=()=>{stop();if(current>0)current--;render()};
+document.getElementById("timeline").onclick=e=>{let r=e.currentTarget.getBoundingClientRect();current=Math.round(((e.clientX-r.left)/r.width)*(scenes.length-1));stop();render()};
+render();
+})();
+</script>
+</body>
+</html>
