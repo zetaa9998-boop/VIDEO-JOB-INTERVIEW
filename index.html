@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Job Interview Video - Grade XII</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#07152f;color:#fff;overflow-x:hidden}
+.app{max-width:1200px;margin:auto;min-height:100vh;background:#0b1d3d}
+.top{padding:18px 24px;background:linear-gradient(135deg,#123b82,#2563eb)}
+.top h1{margin:0;font-size:28px}.top p{margin:6px 0 0;opacity:.9}
+.video{position:relative;background:#000;min-height:560px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.slide{display:none;width:100%;height:560px;object-fit:contain;background:#000}
+.slide.active{display:block}
+.sceneTitle{position:absolute;left:22px;top:18px;background:#000b;padding:10px 14px;border-radius:10px;font-weight:bold;z-index:3}
+.controls{background:#102751;padding:14px 20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+button{border:0;border-radius:8px;padding:11px 16px;font-weight:bold;cursor:pointer}
+.primary{background:#3b82f6;color:#fff}.secondary{background:#475569;color:#fff}.green{background:#10b981;color:#fff}.yellow{background:#f59e0b;color:#111}
+.timeline{flex:1;min-width:180px;height:8px;background:#334155;border-radius:99px;cursor:pointer}.timeline span{display:block;height:100%;width:0;background:#60a5fa;border-radius:99px}
+.counter{font-weight:bold;min-width:90px;text-align:center}
+.caption{padding:20px 24px;background:#0f2b57}
+.caption h2{margin:0 0 8px;color:#93c5fd}.caption p{margin:0;line-height:1.6}
+.quiz{display:none;padding:26px;background:#f8fafc;color:#172033}.quiz.show{display:block}
+.quiz h2{color:#1d4ed8}.question{font-size:20px;font-weight:bold;line-height:1.5}
+.option{display:block;width:100%;margin:9px 0;text-align:left;background:#e2e8f0;color:#172033}.option:hover{background:#dbeafe}.option.correct{background:#bbf7d0}.option.wrong{background:#fecaca}
+.feedback{font-weight:bold;margin-top:12px;min-height:24px}.score{font-size:25px;font-weight:bold;color:#047857}
+.resources{padding:22px;background:#0f2b57}.resources a{color:#bfdbfe}
+@media(max-width:700px){.video,.slide{height:360px}.top h1{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="top">
+<h1>💼 Interactive Job Interview Video</h1>
+<p>Grade XII SMK • Learn → Watch → Answer → Check Your Understanding</p>
+</div>
+
+<div class="video" id="videoArea">
+<div class="sceneTitle" id="sceneTitle">Scene 1 — What is a Job Interview?</div>
+<img class="slide active" id="slide1" src="job-interview-overview.png" alt="Job Interview overview">
+<img class="slide" id="slide2" src="job-interview-expressions.png" alt="Common Job Interview Expressions">
+</div>
+
+<div class="controls">
+<button class="secondary" id="prev">◀ Previous</button>
+<button class="primary" id="play">▶ Play</button>
+<button class="secondary" id="next">Next ▶</button>
+<div class="timeline" id="timeline"><span id="progress"></span></div>
+<div class="counter" id="counter">1 / 10</div>
+</div>
+
+<div class="caption">
+<h2 id="capTitle">What is a Job Interview?</h2>
+<p id="capText">A job interview is a formal conversation between a job applicant and an interviewer. Pay attention to education, skills, experience, attitude, communication, motivation, teamwork, and professional ability.</p>
+</div>
+
+<section class="quiz" id="quiz">
+<h2>🎯 Quick Check</h2>
+<div class="question" id="question"></div>
+<div id="options"></div>
+<div class="feedback" id="feedback"></div>
+<button class="green" id="continue" style="display:none">Continue ▶</button>
+<div class="score" id="score"></div>
+</section>
+
+<div class="resources">
+<b>Learning flow:</b> Watch each scene, use Play for automatic presentation, and answer the interactive questions at checkpoints.
+</div>
+</div>
+
+<script>
+(function(){
+const scenes=[
+{title:"Scene 1 — What is a Job Interview?",cap:"What is a Job Interview?",text:"A job interview is a formal conversation between a job applicant and an interviewer. Pay attention to education, skills, experience, attitude, communication, motivation, teamwork, and professional ability.",img:0},
+{title:"Scene 2 — Stages of a Job Interview",cap:"Stages of a Job Interview",text:"Review the nine stages: greeting, introduction, education, experience, skills, strengths and weaknesses, motivation, career goals, and closing.",img:0},
+{title:"Scene 3 — Common Questions",cap:"Common Interview Questions",text:"Practice questions such as: Can you tell me about yourself? What is your educational background? What skills do you have? What are your strengths? What is your weakness?",img:0},
+{title:"Scene 4 — Useful Expressions",cap:"Useful Expressions",text:"Use polite expressions: Good morning. Nice to meet you. Thank you for the opportunity. I'd like to introduce myself. I graduated from... I have experience in... I look forward to working with you.",img:0},
+{title:"Scene 5 — Talking About Education",cap:"Talking About Education",text:"Useful patterns include: I graduated from SMK in 2026. I majored in Software Engineering. I studied Computer and Network Engineering. My major was Mechanical Engineering.",img:1},
+{title:"Scene 6 — Talking About Experience",cap:"Talking About Internship Experience",text:"If you do not have formal work experience, use your internship or PKL as relevant experience. Example: During my internship, I worked with the maintenance team and learned how to work in a team.",img:1},
+{title:"Scene 7 — Talking About Skills",cap:"Technical Skills and Soft Skills",text:"Technical skills can include operating machinery, AutoCAD, installing networks, troubleshooting computers, or creating simple websites. Soft skills include communication, teamwork, problem solving, and time management.",img:1},
+{title:"Scene 8 — Strengths and Weaknesses",cap:"Strengths and Weaknesses",text:"For strengths, give a strength plus an example. For weaknesses, avoid extremely negative answers and explain how you are improving. A strong pattern is: weakness + improvement.",img:1},
+{title:"Scene 9 — Motivation and Career Goals",cap:"Why Do You Want This Job?",text:"Explain why the position matches your skills and goals. For career goals, describe realistic development: gaining experience, developing technical skills, and taking on more responsibility.",img:1},
+{title:"Scene 10 — Closing the Interview",cap:"Ask Good Questions and Close Politely",text:"When asked whether you have questions, ask about responsibilities, training, important skills, or the recruitment process. Finish by thanking the interviewer and showing appreciation.",img:1}
+];
+
+const quizzes=[
+{scene:1,q:"Which statement best defines a job interview?",o:["An informal conversation with friends","A formal conversation between an applicant and an interviewer","A written school assignment","A company advertisement"],a:1},
+{scene:2,q:"What should you normally do at the beginning of an interview?",o:["Ask about salary immediately","Give a greeting and introduce yourself politely","Leave the room","Talk about your weaknesses first"],a:1},
+{scene:3,q:"Which answer is most appropriate for 'Can you tell me about yourself?'",o:["A short professional introduction","A long story about your family","A complaint about your previous school","I don't know"],a:0},
+{scene:4,q:"Which expression is professional in an interview?",o:["What's up?","Give me the job.","Thank you for the opportunity.","I need money."],a:2},
+{scene:5,q:"Which sentence correctly describes education?",o:["I graduated from SMK in 2026.","I graduate yesterday.","I was graduate from SMK.","I have graduate in SMK."],a:0},
+{scene:6,q:"If a student has no formal work experience, what can they use?",o:["Their favorite hobby only","Their PKL or internship experience","A friend's experience","Nothing"],a:1},
+{scene:7,q:"Which is a soft skill?",o:["AutoCAD","Installing networks","Communication","Operating machinery"],a:2},
+{scene:8,q:"What is a good way to discuss a weakness?",o:["Say you are perfect","Give a weakness and explain how you are improving","Blame someone else","Say you have no skills"],a:1},
+{scene:9,q:"Which career goal is realistic for a fresh graduate?",o:["Become CEO next month","Develop skills and gradually take more responsibility","Never learn anything new","Avoid responsibility"],a:1},
+{scene:10,q:"Which is a good question to ask at the end?",o:["Can I leave now?","How much money will you give me today?","What kind of training does the company provide?","Why should I work?"],a:2}
+];
+
+let current=0,playing=false,timer=null,quizIndex=0,quizScore=0,answered=false;
+const slides=[document.getElementById("slide1"),document.getElementById("slide2")];
+
+function render(){
+const s=scenes[current];
+slides.forEach((el,i)=>el.classList.toggle("active",i===s.img));
+document.getElementById("sceneTitle").textContent=s.title;
+document.getElementById("capTitle").textContent=s.cap;
+document.getElementById("capText").textContent=s.text;
+document.getElementById("counter").textContent=(current+1)+" / "+scenes.length;
+document.getElementById("progress").style.width=((current+1)/scenes.length*100)+"%";
+if(current===scenes.length-1) stop();
+}
+function go(n){
+current=Math.max(0,Math.min(scenes.length-1,n)); render();
+if(current<scenes.length-1 && playing) schedule();
+}
+function schedule(){
+clearTimeout(timer);
+timer=setTimeout(()=>{current++;render();if(current<scenes.length-1){schedule()}else{playing=false}},5500);
+}
+function play(){
+if(playing){stop();return}
+playing=true;document.getElementById("play").textContent="⏸ Pause";schedule();
+}
+function stop(){playing=false;clearTimeout(timer);document.getElementById("play").textContent="▶ Play"}
+
+function showQuiz(){
+const q=quizzes[quizIndex];
+answered=false;
+document.getElementById("quiz").classList.add("show");
+document.getElementById("question").textContent=q.q;
+document.getElementById("feedback").textContent="";
+document.getElementById("continue").style.display="none";
+document.getElementById("score").textContent="Score: "+quizScore+" / "+quizzes.length;
+const box=document.getElementById("options");box.innerHTML="";
+q.o.forEach((text,i)=>{
+const b=document.createElement("button");b.className="option";b.textContent=String.fromCharCode(65+i)+". "+text;
+b.onclick=()=>answer(i,b);box.appendChild(b);
+});
+}
+function answer(i,button){
+if(answered)return;answered=true;
+const q=quizzes[quizIndex];
+const buttons=document.querySelectorAll(".option");
+buttons[q.a].classList.add("correct");
+if(i===q.a){quizScore++;document.getElementById("feedback").textContent="✅ Correct!";}
+else{button.classList.add("wrong");document.getElementById("feedback").textContent="❌ Not quite. The correct answer is "+String.fromCharCode(65+q.a)+".";}
+document.getElementById("score").textContent="Score: "+quizScore+" / "+quizzes.length;
+document.getElementById("continue").style.display="inline-block";
+}
+document.getElementById("continue").onclick=()=>{
+quizIndex++;
+if(quizIndex<quizzes.length){current=quizzes[quizIndex].scene-1;render();showQuiz();}
+else{document.getElementById("question").textContent="🎉 Interactive lesson completed!";document.getElementById("options").innerHTML="";document.getElementById("feedback").textContent="Final score: "+quizScore+" / "+quizzes.length+" ("+Math.round(quizScore/quizzes.length*100)+"%).";document.getElementById("continue").style.display="none";}
+};
+document.getElementById("prev").onclick=()=>{stop();go(current-1)};
+document.getElementById("next").onclick=()=>{stop();go(current+1)};
+document.getElementById("play").onclick=play;
+document.getElementById("timeline").onclick=e=>{const r=e.currentTarget.getBoundingClientRect();go(Math.round(((e.clientX-r.left)/r.width)*(scenes.length-1)))};
+render();
+setTimeout(showQuiz,1000);
+})();
+</script>
+</body>
+</html>
